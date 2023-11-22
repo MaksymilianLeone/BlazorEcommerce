@@ -1,8 +1,7 @@
 ﻿@page "/login"
-@inject AuthService AuthService
+@inject IAuthService AuthService
 @inject ILocalStorageService LocalStorage
 @inject NavigationManager NavigationManager
-
 
 <PageTitle>Login</PageTitle>
 
@@ -13,19 +12,18 @@
     <div class="mb-3">
         <label for="email">Email</label>
         <InputText id="email" @bind-Value="user.Email" class="form-control" />
-        <ValidationMessage For="(()=> user.Email)" />
+        <ValidationMessage For="@(() => user.Email)" />
     </div>
     <div class="mb-3">
         <label for="password">Password</label>
-        <InputText id="password" @bind-Value="user.Password" class="form-control" type="password"/>
-        <ValidationMessage For="(()=> user.Password)" />
+        <InputText id="password" @bind-Value="user.Password" class="form-control" type="password" />
+        <ValidationMessage For="@(() => user.Password)" />
     </div>
     <button type="submit" class="btn btn-primary">Login</button>
 </EditForm>
 <div class="text-danger">
     <span>@errorMessage</span>
 </div>
-
 
 @code {
     private UserLogin user = new UserLogin();
