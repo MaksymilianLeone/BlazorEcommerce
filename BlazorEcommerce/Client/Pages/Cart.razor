@@ -56,7 +56,7 @@ else
 
     private async Task LoadCart()
     {
-        if ((await CartService.GetCartItems()).Count == null)
+        if ((await CartService.GetCartItems()).Count == 0)
         {
             message = "Your cart is empty.";
             cartProducts = new List<CartProductResponse>();
