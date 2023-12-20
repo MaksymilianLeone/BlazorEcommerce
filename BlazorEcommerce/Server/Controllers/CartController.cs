@@ -63,7 +63,5 @@ namespace BlazorEcommerce.Server.Controllers
             var result = await _cartService.GetDbCartProducts();
             return Ok(result);
         }
-
-
     }
 }
