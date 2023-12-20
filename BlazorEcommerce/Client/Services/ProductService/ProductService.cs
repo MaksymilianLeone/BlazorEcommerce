@@ -20,15 +20,15 @@ namespace BlazorEcommerce.Client.Services.ProductService
 
         public async Task<ServiceResponse<Product>> GetProduct(int productId)
         {
-            var result = await _http.GetFromJsonAsync<ServiceResponse<Product>>($"api/Product/{productId}");
+            var result = await _http.GetFromJsonAsync<ServiceResponse<Product>>($"api/product/{productId}");
             return result;
         }
 
         public async Task GetProducts(string? categoryUrl = null)
         {
             var result = categoryUrl == null ?
-                await _http.GetFromJsonAsync<ServiceResponse<List<Product>>>("api/Product/featured") :
-                await _http.GetFromJsonAsync<ServiceResponse<List<Product>>>($"api/Product/category/{categoryUrl}");
+                await _http.GetFromJsonAsync<ServiceResponse<List<Product>>>("api/product/featured") :
+                await _http.GetFromJsonAsync<ServiceResponse<List<Product>>>($"api/product/category/{categoryUrl}");
 
             if (result != null && result.Data != null)
             {
@@ -46,7 +46,7 @@ namespace BlazorEcommerce.Client.Services.ProductService
         public async Task<List<string>> GetProductSearchSuggestions(string searchText)
         {
             var result = await _http
-                .GetFromJsonAsync<ServiceResponse<List<string>>>($"api/Product/searchsuggestions/{searchText}");
+                .GetFromJsonAsync<ServiceResponse<List<string>>>($"api/product/searchsuggestions/{searchText}");
             return result.Data;
         }
 
@@ -54,7 +54,7 @@ namespace BlazorEcommerce.Client.Services.ProductService
         {
             LastSearchText= searchText;
             var result = await _http
-                .GetFromJsonAsync<ServiceResponse<ProductSearchResult>>($"api/Product/search/{searchText}/{page}");
+                .GetFromJsonAsync<ServiceResponse<ProductSearchResult>>($"api/product/search/{searchText}/{page}");
             if (result != null && result.Data != null)
             {
                 Products = result.Data.Products;

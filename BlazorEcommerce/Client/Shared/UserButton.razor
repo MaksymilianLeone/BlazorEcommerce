@@ -43,9 +43,18 @@
 
     private async Task Logout()
     {
-        await LocalStorage.RemoveItemAsync("authToken");
-        await CartService.GetCartItemsCount();
-        await AuthenticationStateProvider.GetAuthenticationStateAsync();
-        NavigationManager.NavigateTo("");
+        try
+        {
+            await LocalStorage.RemoveItemAsync("authToken");
+            await CartService.GetCartItemsCount();
+            await AuthenticationStateProvider.GetAuthenticationStateAsync();
+            NavigationManager.NavigateTo("");
+
+        }
+        catch (Exception)
+        {
+
+            throw;
+        }
     }
 }
