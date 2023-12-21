@@ -9,24 +9,41 @@
             _context = context;
         }
 
-        public async Task<ServiceResponse<List<Product>>> GetFeaturedProducts()
+        public async Task<ServiceResponse<List<Product>>> GetAdminProducts()
         {
             var response = new ServiceResponse<List<Product>>
             {
                 Data = await _context.Products
-                .Where(p => p.Featured)
-                .Include(p => p.Variants)
+                .Where(p => !p.Deleted)
+                .Include(p => p.Variants.Where(v => !v.Deleted))
+                .ThenInclude(v => v.ProductType)
                 .ToListAsync()
             };
 
             return response;
         }
 
-        public async Task<ServiceResponse<List<Product>>> GetProductAsync()
+        public async Task<ServiceResponse<List<Product>>> GetFeaturedProducts()
         {
             var response = new ServiceResponse<List<Product>>
             {
-                Data = await _context.Products.Include(p => p.Variants).ToListAsync()
+                Data = await _context.Products
+                .Where(p => p.Featured && p.Visible && !p.Deleted)
+                .Include(p => p.Variants.Where(v => v.Visible && !v.Deleted))
+                .ToListAsync()
+            };
+
+            return response;
+        }
+
+        public async Task<ServiceResponse<List<Product>>> GetProductsAsync()
+        {
+            var response = new ServiceResponse<List<Product>>
+            {
+                Data = await _context.Products
+                .Where(p => p.Visible && !p.Deleted)
+                .Include(p => p.Variants.Where(v => v.Visible && !v.Deleted))
+                .ToListAsync()
             };
 
             return response;
@@ -36,11 +53,11 @@
         {
             var response = new ServiceResponse<Product>();
             var product = await _context.Products
-                .Include(p => p.Variants)
+                .Include(p => p.Variants.Where(v => v.Visible && !v.Deleted))
                 .ThenInclude(v => v.ProductType)
-                .FirstOrDefaultAsync(p => p.Id == productId);
+                .FirstOrDefaultAsync(p => p.Id == productId && !p.Deleted && p.Visible);
 
-            if(product == null)
+            if (product == null)
             {
                 response.Success = false;
                 response.Message = "Sorry, but this product does not exist.";
@@ -58,8 +75,9 @@
             var response = new ServiceResponse<List<Product>>
             {
                 Data = await _context.Products
-                .Where(p => p.Category.Url.ToLower().Equals(categoryUrl.ToLower()))
-                .Include(p => p.Variants)
+                .Where(p => p.Category.Url.ToLower().Equals(categoryUrl.ToLower()) &&
+                p.Visible && !p.Deleted)
+                .Include(p => p.Variants.Where(v => v.Visible && !v.Deleted))
                 .ToListAsync()
             };
 
@@ -74,12 +92,12 @@
 
             foreach (var product in products)
             {
-                if(product.Title.Contains(searchText, StringComparison.OrdinalIgnoreCase))
+                if (product.Title.Contains(searchText, StringComparison.OrdinalIgnoreCase))
                 {
                     result.Add(product.Title);
                 }
 
-                if(product.Description != null)
+                if (product.Description != null)
                 {
                     var punctuation = product.Description.Where(char.IsPunctuation)
                         .Distinct().ToArray();
@@ -88,7 +106,7 @@
 
                     foreach (var word in words)
                     {
-                        if(word.Contains(searchText, StringComparison.OrdinalIgnoreCase)
+                        if (word.Contains(searchText, StringComparison.OrdinalIgnoreCase)
                             && !result.Contains(word))
                         {
                             result.Add(word);
@@ -105,10 +123,9 @@
             var pageResults = 2f;
             var pageCount = Math.Ceiling((await FindProductsBySearchText(searchText)).Count / pageResults);
             var products = await _context.Products
-                                .Where(p => p.Title.ToLower().Contains(searchText.ToLower())
-                                ||
-                                p.Description.ToLower().Contains(searchText.ToLower()))
-                                .Include(p => p.Variants)
+                                .Where(p => p.Title.ToLower().Contains(searchText.ToLower()) ||
+                                p.Description.ToLower().Contains(searchText.ToLower()) && p.Visible && !p.Deleted)
+                                .Include(p => p.Variants.Where(v => v.Visible && !v.Deleted))
                                 .Skip((page - 1) * (int)pageResults)
                                 .Take((int)pageResults)
                                 .ToListAsync();
@@ -130,10 +147,10 @@
         private async Task<List<Product>> FindProductsBySearchText(string searchText)
         {
             return await _context.Products
-                                .Where(p => p.Title.ToLower().Contains(searchText.ToLower())
-                                ||
-                                p.Description.ToLower().Contains(searchText.ToLower()))
-                                .Include(p => p.Variants)
+                                .Where(p => p.Title.ToLower().Contains(searchText.ToLower()) ||
+                                    p.Description.ToLower().Contains(searchText.ToLower()) &&
+                                    p.Visible && !p.Deleted)
+                                .Include(p => p.Variants.Where(v => v.Visible && !v.Deleted))
                                 .ToListAsync();
         }
     }
