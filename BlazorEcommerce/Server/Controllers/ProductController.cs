@@ -32,7 +32,7 @@ namespace BlazorEcommerce.Server.Controllers
         [HttpPut, Authorize(Roles = "Admin")]
         public async Task<ActionResult<ServiceResponse<Product>>> UpdateProduct(Product product)
         {
-            var result = await _productService.CreateProduct(product);
+            var result = await _productService.UpdateProduct(product);
             return Ok(result);
         }
 
@@ -46,21 +46,21 @@ namespace BlazorEcommerce.Server.Controllers
         [HttpGet]
         public async Task<ActionResult<ServiceResponse<List<Product>>>> GetProducts()
         {
-            var result = await _productService.GetProducts();
+            var result = await _productService.GetProductsAsync();
             return Ok(result);
         }
 
         [HttpGet("{productId}")]
-        public async Task<ActionResult<ServiceResponse<Product>>> GetProducts(int productId)
+        public async Task<ActionResult<ServiceResponse<Product>>> GetProduct(int productId)
         {
             var result = await _productService.GetProductAsync(productId);
             return Ok(result);
         }
 
         [HttpGet("category/{categoryUrl}")]
-        public async Task<ActionResult<ServiceResponse<Product>>> GetProductsByCategory(string categoryUrl)
+        public async Task<ActionResult<ServiceResponse<List<Product>>>> GetProductsByCategory(string categoryUrl)
         {
-            var result = await _productService.GetProductByCategory(categoryUrl);
+            var result = await _productService.GetProductsByCategory(categoryUrl);
             return Ok(result);
         }
 
