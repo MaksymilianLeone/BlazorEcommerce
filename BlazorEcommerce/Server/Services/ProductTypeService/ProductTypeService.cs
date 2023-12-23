@@ -1,8 +1,4 @@
-﻿
-using BlazorEcommerce.Shared;
-using System.Runtime.InteropServices;
-
-namespace BlazorEcommerce.Server.Services.ProductTypeService
+﻿namespace BlazorEcommerce.Server.Services.ProductTypeService
 {
     public class ProductTypeService : IProductTypeService
     {
@@ -36,12 +32,13 @@ namespace BlazorEcommerce.Server.Services.ProductTypeService
                 return new ServiceResponse<List<ProductType>>
                 {
                     Success = false,
-                    Message = "Product Type not found"
+                    Message = "Product Type not found."
                 };
             }
 
             dbProductType.Name = productType.Name;
             await _context.SaveChangesAsync();
+
             return await GetProductTypes();
         }
     }

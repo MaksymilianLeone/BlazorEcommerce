@@ -37,7 +37,7 @@ namespace BlazorEcommerce.Server.Controllers
         }
 
         [HttpDelete("{id}"), Authorize(Roles = "Admin")]
-        public async Task<ActionResult<ServiceResponse<Product>>> DeleteProduct(int id)
+        public async Task<ActionResult<ServiceResponse<bool>>> DeleteProduct(int id)
         {
             var result = await _productService.DeleteProduct(id);
             return Ok(result);
@@ -72,14 +72,14 @@ namespace BlazorEcommerce.Server.Controllers
         }
 
         [HttpGet("searchsuggestions/{searchText}")]
-        public async Task<ActionResult<ServiceResponse<Product>>> GetProductSearchSuggestions(string searchText)
+        public async Task<ActionResult<ServiceResponse<List<Product>>>> GetProductSearchSuggestions(string searchText)
         {
             var result = await _productService.GetProductSearchSuggestions(searchText);
             return Ok(result);
         }
 
         [HttpGet("featured")]
-        public async Task<ActionResult<ServiceResponse<Product>>> GetFeaturedProducts()
+        public async Task<ActionResult<ServiceResponse<List<Product>>>> GetFeaturedProducts()
         {
             var result = await _productService.GetFeaturedProducts();
             return Ok(result);

@@ -19,6 +19,8 @@ namespace BlazorEcommerce.Shared
 
         public string ImageURL { get; set; } = string.Empty;
 
+        public List<Image> Images { get; set; } = new List<Image>();
+
         public Category? Category { get; set; }
 
         public int CategoryId { get; set; }

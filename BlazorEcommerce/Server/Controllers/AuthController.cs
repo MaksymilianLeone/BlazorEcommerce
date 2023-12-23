@@ -24,7 +24,7 @@ namespace BlazorEcommerce.Server.Controllers
                 {
                     Email = request.Email
                 },
-            request.Password);
+                request.Password);
 
             if (!response.Success)
             {
@@ -59,6 +59,5 @@ namespace BlazorEcommerce.Server.Controllers
 
             return Ok(response);
         }
-        
     }
 }

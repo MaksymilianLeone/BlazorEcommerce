@@ -1,5 +1,4 @@
-﻿
-namespace BlazorEcommerce.Client.Services.ProductTypeService
+﻿namespace BlazorEcommerce.Client.Services.ProductTypeService
 {
     public class ProductTypeService : IProductTypeService
     {
@@ -9,6 +8,7 @@ namespace BlazorEcommerce.Client.Services.ProductTypeService
         {
             _http = http;
         }
+
         public List<ProductType> ProductTypes { get; set; } = new List<ProductType>();
 
         public event Action OnChange;
@@ -16,7 +16,8 @@ namespace BlazorEcommerce.Client.Services.ProductTypeService
         public async Task AddProductType(ProductType productType)
         {
             var response = await _http.PostAsJsonAsync("api/producttype", productType);
-            ProductTypes = (await response.Content.ReadFromJsonAsync<ServiceResponse<List<ProductType>>>()).Data;
+            ProductTypes = (await response.Content
+                .ReadFromJsonAsync<ServiceResponse<List<ProductType>>>()).Data;
             OnChange.Invoke();
         }
 
@@ -31,14 +32,16 @@ namespace BlazorEcommerce.Client.Services.ProductTypeService
 
         public async Task GetProductTypes()
         {
-            var result = await _http.GetFromJsonAsync<ServiceResponse<List<ProductType>>>("api/producttype");
+            var result = await _http
+                .GetFromJsonAsync<ServiceResponse<List<ProductType>>>("api/producttype");
             ProductTypes = result.Data;
         }
 
         public async Task UpdateProductType(ProductType productType)
         {
             var response = await _http.PutAsJsonAsync("api/producttype", productType);
-            ProductTypes = (await response.Content.ReadFromJsonAsync<ServiceResponse<List<ProductType>>>()).Data;
+            ProductTypes = (await response.Content
+                .ReadFromJsonAsync<ServiceResponse<List<ProductType>>>()).Data;
             OnChange.Invoke();
         }
     }

@@ -16,7 +16,7 @@ namespace BlazorEcommerce.Server.Controllers
         }
 
         [HttpPost("products")]
-        public async Task<ActionResult<ServiceResponse<List<CartProductResponse>>>> GetCardProducts(List<CartItem> cartItems)
+        public async Task<ActionResult<ServiceResponse<List<CartProductResponse>>>> GetCartProducts(List<CartItem> cartItems)
         {
             var result = await _cartService.GetCartProducts(cartItems);
             return Ok(result);
@@ -29,18 +29,17 @@ namespace BlazorEcommerce.Server.Controllers
             return Ok(result);
         }
 
-
         [HttpPost("add")]
-        public async Task<ActionResult<ServiceResponse<bool>>> AddToCart(CartItem cartItems)
+        public async Task<ActionResult<ServiceResponse<bool>>> AddToCart(CartItem cartItem)
         {
-            var result = await _cartService.AddToCart(cartItems);
+            var result = await _cartService.AddToCart(cartItem);
             return Ok(result);
         }
 
         [HttpPut("update-quantity")]
-        public async Task<ActionResult<ServiceResponse<bool>>> UpdateQuantity(CartItem cartItems)
+        public async Task<ActionResult<ServiceResponse<bool>>> UpdateQuantity(CartItem cartItem)
         {
-            var result = await _cartService.UpdateQuantity(cartItems);
+            var result = await _cartService.UpdateQuantity(cartItem);
             return Ok(result);
         }
 

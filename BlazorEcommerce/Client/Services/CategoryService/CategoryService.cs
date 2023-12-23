@@ -1,5 +1,4 @@
-﻿
-namespace BlazorEcommerce.Client.Services.CategoryService
+﻿namespace BlazorEcommerce.Client.Services.CategoryService
 {
     public class CategoryService : ICategoryService
     {
@@ -9,8 +8,9 @@ namespace BlazorEcommerce.Client.Services.CategoryService
         {
             _http = http;
         }
+
         public List<Category> Categories { get; set; } = new List<Category>();
-        public List<Category> AdminCategories { get; set ; } = new List<Category>();
+        public List<Category> AdminCategories { get; set; } = new List<Category>();
 
         public event Action OnChange;
 
@@ -44,18 +44,14 @@ namespace BlazorEcommerce.Client.Services.CategoryService
         {
             var response = await _http.GetFromJsonAsync<ServiceResponse<List<Category>>>("api/Category/admin");
             if (response != null && response.Data != null)
-            {
                 AdminCategories = response.Data;
-            }
         }
 
         public async Task GetCategories()
         {
             var response = await _http.GetFromJsonAsync<ServiceResponse<List<Category>>>("api/Category");
             if (response != null && response.Data != null)
-            {
                 Categories = response.Data;
-            }
         }
 
         public async Task UpdateCategory(Category category)

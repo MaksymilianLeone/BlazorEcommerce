@@ -28,7 +28,15 @@ else
         <tbody>
             <Virtualize Items="ProductService.AdminProducts" Context="product">
                 <tr>
-                    <td><img src="@product.ImageURL" /></td>
+                    <td>
+                        @if (!string.IsNullOrEmpty(product.ImageURL))
+                        {
+                            <img src="@product.ImageURL" />
+                        }else if(product.Images.Count > 0)
+                        {
+                            <img src="@product.Images[0].Data" />
+                        }
+                    </td>
                     <td>@product.Title</td>
                     <td>
                         @foreach (var variant in product.Variants)

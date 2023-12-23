@@ -1,5 +1,4 @@
-﻿
-namespace BlazorEcommerce.Server.Services.AddressService
+﻿namespace BlazorEcommerce.Server.Services.AddressService
 {
     public class AddressService : IAddressService
     {
@@ -11,16 +10,16 @@ namespace BlazorEcommerce.Server.Services.AddressService
             _context = context;
             _authService = authService;
         }
+
         public async Task<ServiceResponse<Address>> AddOrUpdateAddress(Address address)
         {
             var response = new ServiceResponse<Address>();
             var dbAddress = (await GetAddress()).Data;
-
             if (dbAddress == null)
             {
                 address.UserId = _authService.GetUserId();
                 _context.Addresses.Add(address);
-                response.Data = dbAddress;
+                response.Data = address;
             }
             else
             {
@@ -35,6 +34,7 @@ namespace BlazorEcommerce.Server.Services.AddressService
             }
 
             await _context.SaveChangesAsync();
+
             return response;
         }
 
@@ -43,9 +43,7 @@ namespace BlazorEcommerce.Server.Services.AddressService
             int userId = _authService.GetUserId();
             var address = await _context.Addresses
                 .FirstOrDefaultAsync(a => a.UserId == userId);
-
             return new ServiceResponse<Address> { Data = address };
-
         }
     }
 }
