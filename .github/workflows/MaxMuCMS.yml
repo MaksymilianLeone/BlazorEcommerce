@@ -2,13 +2,15 @@ name: Build and deploy .NET Core application to Web App MaxMuCMS
 on:
   push:
     branches:
-    - master
+    - 1-leonebijou  # Correct branch name
+
 env:
   AZURE_WEBAPP_NAME: MaxMuCMS
   AZURE_WEBAPP_PACKAGE_PATH: BlazorEcommerce\Server\publish
   CONFIGURATION: Release
   DOTNET_CORE_VERSION: 8.0.x
   WORKING_DIRECTORY: BlazorEcommerce\Server
+
 jobs:
   build:
     runs-on: windows-latest
@@ -31,6 +33,7 @@ jobs:
       with:
         name: webapp
         path: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
+
   deploy:
     runs-on: windows-latest
     needs: build
