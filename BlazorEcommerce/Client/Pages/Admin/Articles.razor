@@ -1,59 +1,123 @@
 ﻿@page "/admin/articles"
 @using BlazorEcommerce.Client.Services.ArticleService
 @inject IArticleService ArticleService
-@inject NavigationManager NavigationManager
 @attribute [Authorize(Roles = "Admin")]
+@implements IDisposable
 
-<h3>Products</h3>
+<h3>Articles</h3>
 
-@if (ArticleService.AdminArticles == null)
+<div class="header">
+    <div class="col">Name</div>
+    <div class="col">Url</div>
+    <div class="col">Visible</div>
+    <div class="col"></div>
+</div>
+
+@foreach (var article in ArticleService.AdminArticles)
 {
-    <span>Loading Products...</span>
+    if(article == null)
+    {
+        <span>No Articles Found</span>
+    }
+    @if (article.Editing)
+    {
+        <EditForm Model="editingArticle" OnSubmit="UpdateArticle">
+            <div class="row">
+                <div class="col">
+                    <InputText @bind-Value="editingArticle.Title" class="form-control"></InputText>
+                </div>
+                <div class="col">
+                    <InputText @bind-Value="editingArticle.Description" class="form-control"></InputText>
+                </div>
+                <div class="col col-visible">
+                    <InputCheckbox @bind-Value="editingArticle.Visible" style="transform: scale(1.5,1.5);"></InputCheckbox>
+                </div>
+                <div class="col">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="oi oi-cloud-upload"></i>
+                    </button>
+                    <button class="btn btn-primary" @onclick="CancelEditing">
+                        <i class="oi oi-circle-x"></i>
+                    </button>
+                </div>
+            </div>
+        </EditForm>
+    }
+    else
+    {
+        <div class="row">
+            <div class="col">
+                @article.Title
+            </div>
+            <div class="col">
+                @article.Description
+            </div>
+            <div class="col col-visible">
+                <span>@(article.Visible ? "✅" : "")</span>
+            </div>
+            <div class="col">
+                <button class="btn btn-primary" @onclick="(() => EditArticle(article))">
+                    <i class="oi oi-pencil"></i>
+                </button>
+                <button class="btn btn-primary" @onclick="(() => DeleteArticle(article.Id))">
+                    <i class="oi oi-trash"></i>
+                </button>
+            </div>
+        </div>
+    }
 }
-else
-{
-    <button class="btn btn-primary float-end" @onclick="CreateArticle">
-        <i class="oi oi-plus"></i> Add new article
-    </button>
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Title</th>
-                <th>Description</th>
-                <th>Edit</th>
-            </tr>
-        </thead>
-        <tbody>
-            <Virtualize Items="ArticleService.AdminArticles" Context="article">
-                <tr>
+<button class="btn btn-primary" @onclick="CreateNewArticle">
+    <i class="oi oi-plus"></i> Add new article
+</button>
 
-                    <td>@article.Title</td>
-                    <td>@article.Description</td>
-                    <td>@(article.Visible ? "✅" : "")</td>
-                    <td>
-                        <button class="btn btn-primary" @onclick="(() => EditArticle(article.Id))">
-                            <i class="oi oi-pencil"></i>
-                        </button>
-                    </td>
-                </tr>
-            </Virtualize>
-        </tbody>
-    </table>
-}
 
 @code {
+    Article editingArticle = null;
+
     protected override async Task OnInitializedAsync()
     {
         await ArticleService.GetAdminArticles();
+        ArticleService.OnChange += StateHasChanged;
     }
 
-    void EditArticle(int productId)
+    public void Dispose()
     {
-        NavigationManager.NavigateTo($"admin/article/{productId}");
+        ArticleService.OnChange -= StateHasChanged;
     }
 
-    void CreateArticle()
+    private void CreateNewArticle()
     {
-        NavigationManager.NavigateTo("admin/article");
+        editingArticle = ArticleService.CreateNewArticle();
+    }
+
+    private void EditArticle(Article article)
+    {
+        article.Editing = true;
+        editingArticle = article;
+    }
+
+    private async Task UpdateArticle()
+    {
+        if (editingArticle.IsNew)
+        {
+            await ArticleService.AddArticle(editingArticle);
+        }
+        else
+        {
+            await ArticleService.UpdateArticle(editingArticle);
+        }
+
+        editingArticle = new Article();
+    }
+
+    private async Task CancelEditing()
+    {
+        editingArticle = new Article();
+        await ArticleService.GetAdminArticles();
+    }
+
+    private async Task DeleteArticle(int id)
+    {
+        await ArticleService.DeleteArticle(id);
     }
 }

@@ -15,42 +15,6 @@ namespace BlazorEcommerce.Server.Controllers
             _articleService = articleService;
         }
 
-        [HttpGet("admin"), Authorize(Roles = "Admin")]
-        public async Task<ActionResult<ServiceResponse<List<Article>>>> GetAdminArticles()
-        {
-            var result = await _articleService.GetAdminArticles();
-            return Ok(result);
-        }
-
-        [HttpPost]
-        public async Task<ActionResult<ServiceResponse<Article>>> CreateArticle(Article article)
-        {
-            var result = await _articleService.CreateArticle(article);
-            if (result.Success)
-            {
-                return Ok(result);
-
-            }
-            else
-            {
-                return BadRequest(result);
-            }
-        }
-
-        [HttpPut]
-        public async Task<ActionResult<ServiceResponse<Article>>> UpdateArticle(Article article)
-        {
-            var result = await _articleService.UpdateArticle(article);
-            return Ok(result);
-        }
-
-        [HttpDelete("{id}")]
-        public async Task<ActionResult<ServiceResponse<bool>>> DeleteArticle(int id)
-        {
-            var result = await _articleService.DeleteArticle(id);
-            return Ok(result);
-        }
-
         [HttpGet]
         public async Task<ActionResult<ServiceResponse<List<Article>>>> GetArticles()
         {
@@ -58,32 +22,31 @@ namespace BlazorEcommerce.Server.Controllers
             return Ok(result);
         }
 
-        [HttpGet("{articleId}")]
-        public async Task<ActionResult<ServiceResponse<Article>>> GetArticle(int articleId)
+        [HttpGet("admin"), Authorize(Roles = "Admin")]
+        public async Task<ActionResult<ServiceResponse<List<Article>>>> GetAdminArticles()
         {
-            var result = await _articleService.GetArticleAsync(articleId);
+            var result = await _articleService.GetAdminArticles();
             return Ok(result);
         }
 
-        [HttpGet("category/{categoryUrl}")]
-        public async Task<ActionResult<ServiceResponse<List<Article>>>> GetArticlesByCategory(string categoryUrl)
+        [HttpDelete("admin/{id}"), Authorize(Roles = "Admin")]
+        public async Task<ActionResult<ServiceResponse<List<Article>>>> DeleteArticle(int id)
         {
-            var result = await _articleService.GetArticlesByCategory(categoryUrl);
+            var result = await _articleService.DeleteArticle(id);
             return Ok(result);
         }
 
-
-        [HttpGet("searchsuggestions/{searchText}")]
-        public async Task<ActionResult<ServiceResponse<List<Article>>>> GetArticleSearchSuggestions(string searchText)
+        [HttpPost("admin"), Authorize(Roles = "Admin")]
+        public async Task<ActionResult<ServiceResponse<List<Article>>>> AddCategory(Article article)
         {
-            var result = await _articleService.GetArticleSearchSuggestions(searchText);
+            var result = await _articleService.AddArticle(article);
             return Ok(result);
         }
 
-        [HttpGet("featured")]
-        public async Task<ActionResult<ServiceResponse<List<Article>>>> GetFeaturedArticles()
+        [HttpPut("admin"), Authorize(Roles = "Admin")]
+        public async Task<ActionResult<ServiceResponse<List<Article>>>> UpdateArticle(Article article)
         {
-            var result = await _articleService.GetFeaturedArticles();
+            var result = await _articleService.UpdateArticle(article);
             return Ok(result);
         }
     }
