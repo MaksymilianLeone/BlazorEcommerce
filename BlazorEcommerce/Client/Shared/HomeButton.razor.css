@@ -1,5 +1,19 @@
 ﻿.home-button {
     white-space: nowrap;
-    margin-right: 10px;
+    margin-right: 1px;
     transform: rotate(-5deg);
+    border-color: transparent;
 }
+.home-button :hover {
+    white-space: nowrap;
+    margin-right: 1px;
+    border-color: transparent;
+}
+
+.logo {
+    transform: rotate(-5deg);
+    width: 100px;
+    height: auto;
+    max-width: none;
+}
+
