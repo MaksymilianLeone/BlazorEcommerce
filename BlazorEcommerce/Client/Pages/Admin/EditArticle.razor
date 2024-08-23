@@ -1,0 +1,123 @@
+﻿@page "/admin/article"
+@page "/admin/article/{id:int}"
+@using BlazorEcommerce.Client.Services.ArticleService
+@inject IArticleService ArticleService
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JSRuntime
+
+@if (loading)
+{
+    <span>@msg</span>
+}
+else
+{
+    @if (article.Editing)
+    {
+        <h3>Edit "@article.Title"</h3>
+    }
+    else if (article.IsNew)
+    {
+        <h3>Create a new Article</h3>
+    }
+
+    <EditForm Model="article" OnValidSubmit="AddOrUpdateArticle">
+        <DataAnnotationsValidator></DataAnnotationsValidator>
+        <div class="mb-0">
+            <label for="title">Title</label>
+            <InputText id="title" @bind-Value="article.Title" class="form-control"></InputText>
+        </div>
+     
+        <div class="mb-0">
+            <label for="description">Description</label>
+            <InputTextArea id="description" @bind-Value="article.Description" class="form-control"></InputTextArea>
+        </div>
+        <hr />
+        <hr />
+        <div class="mb-0">
+            <label for="category">Category</label>
+        </div>
+        <div class="form-check">
+            <InputCheckbox id="feature" @bind-Value="article.Featured" class="form-check-input"></InputCheckbox>
+            <label for="featured" class="form-check-label">Featured</label>
+        </div>
+        <div class="form-check">
+            <InputCheckbox id="visible" @bind-Value="article.Visible" class="form-check-input"></InputCheckbox>
+            <label for="visible" class="form-check-label">Visible</label>
+        </div>
+        <hr />
+        <button type="submit" class="btn btn-primary float-end">@btnText</button>
+        <ValidationSummary></ValidationSummary>
+    </EditForm>
+    @if (!article.IsNew)
+    {
+        <button type="button" class="btn btn-danger float-start" @onclick="DeleteArticle">
+            Delete Article
+        </button>
+    }
+}
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+
+    Article article = new Article();
+    bool loading = true;
+    string btnText = "";
+    string msg = "Loading...";
+
+    protected override async Task OnInitializedAsync()
+    {
+        await ArticleService.GetAdminArticles();
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (Id == 0)
+        {
+            article = new Article { IsNew = true };
+            btnText = "Create Article";
+        }
+        else
+        {
+            Article dbArticle = (await ArticleService.GetArticle(Id)).Data;
+            if (dbArticle == null)
+            {
+                msg = $"Article with Id {Id} does not exist!";
+                return;
+            }
+
+            article = dbArticle;
+            article.Editing = true;
+            btnText = "Update Product";
+        }
+
+        loading = false;
+    }
+
+    async void AddOrUpdateArticle()
+    {
+        if (article.IsNew)
+        {
+            var result = await ArticleService.CreateArticle(article);
+            NavigationManager.NavigateTo($"admin/articles");
+        }
+        else
+        {
+            article.IsNew = false;
+            article = await ArticleService.UpdateArticle(article);
+            NavigationManager.NavigateTo($"admin/articles", true);
+        }
+    }
+
+    async void DeleteArticle()
+    {
+        bool confirmed = await JSRuntime.InvokeAsync<bool>("confirm",
+        $"Do you really want to delete '{article.Title}?");
+
+        if (confirmed)
+        {
+            await ArticleService.DeleteArticle(article);
+            NavigationManager.NavigateTo("admin/articles");
+        }
+    }
+}

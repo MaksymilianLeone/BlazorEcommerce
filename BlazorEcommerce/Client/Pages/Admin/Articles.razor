@@ -1,0 +1,59 @@
+﻿@page "/admin/articles"
+@using BlazorEcommerce.Client.Services.ArticleService
+@inject IArticleService ArticleService
+@inject NavigationManager NavigationManager
+@attribute [Authorize(Roles = "Admin")]
+
+<h3>Products</h3>
+
+@if (ArticleService.AdminArticles == null)
+{
+    <span>Loading Products...</span>
+}
+else
+{
+    <button class="btn btn-primary float-end" @onclick="CreateArticle">
+        <i class="oi oi-plus"></i> Add new article
+    </button>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Description</th>
+                <th>Edit</th>
+            </tr>
+        </thead>
+        <tbody>
+            <Virtualize Items="ArticleService.AdminArticles" Context="article">
+                <tr>
+
+                    <td>@article.Title</td>
+                    <td>@article.Description</td>
+                    <td>@(article.Visible ? "✅" : "")</td>
+                    <td>
+                        <button class="btn btn-primary" @onclick="(() => EditArticle(article.Id))">
+                            <i class="oi oi-pencil"></i>
+                        </button>
+                    </td>
+                </tr>
+            </Virtualize>
+        </tbody>
+    </table>
+}
+
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        await ArticleService.GetAdminArticles();
+    }
+
+    void EditArticle(int productId)
+    {
+        NavigationManager.NavigateTo($"admin/article/{productId}");
+    }
+
+    void CreateArticle()
+    {
+        NavigationManager.NavigateTo("admin/article");
+    }
+}

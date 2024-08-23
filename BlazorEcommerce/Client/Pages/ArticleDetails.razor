@@ -1,0 +1,44 @@
+﻿@page "/article/{id:int}"
+@using BlazorEcommerce.Client.Services.ArticleService
+@inject IArticleService ArticleService
+
+@if (article == null)
+{
+    <span>@message</span>
+}
+else
+{
+    <div class="media">
+      
+        <div class="media-body">
+            <h2 class="mb-0">@article.Title</h2>
+            <p>@article.Description</p>
+        </div>
+    </div>
+}
+
+@code {
+    private Article? article = null;
+    private string message = string.Empty;
+    private int currentTypeId = 1;
+
+    [Parameter]
+    public int Id { get; set; }
+
+
+    protected override async Task OnParametersSetAsync()
+    {
+        message = "Loading product...";
+        var result = await ArticleService.GetArticle(Id);
+
+        if (!result.Success)
+        {
+            message = result.Message;
+        }
+        else
+        {
+            article = result.Data;
+           
+        }
+    }
+}
