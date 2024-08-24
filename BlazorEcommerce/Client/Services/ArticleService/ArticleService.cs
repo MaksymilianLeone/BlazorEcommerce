@@ -60,7 +60,7 @@ namespace BlazorEcommerce.Client.Services.ArticleService
 
         public async Task UpdateArticle(Article article)
         {
-            var response = await _http.PutAsJsonAsync("api/Category/admin", article);
+            var response = await _http.PutAsJsonAsync("api/Article/admin", article);
             AdminArticles = (await response.Content
                 .ReadFromJsonAsync<ServiceResponse<List<Article>>>()).Data;
             await GetArticles();

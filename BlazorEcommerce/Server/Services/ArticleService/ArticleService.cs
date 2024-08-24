@@ -35,7 +35,7 @@ namespace BlazorEcommerce.Server.Services.ArticleService
                 };
             }
 
-            article.Deleted = true;
+            _context.Articles.Remove(article);
             await _context.SaveChangesAsync();
 
             return await GetAdminArticles();
@@ -88,6 +88,7 @@ namespace BlazorEcommerce.Server.Services.ArticleService
             }
 
             dbArticle.Title = article.Title;
+            dbArticle.Description = article.Description;
             dbArticle.Visible = article.Visible;
 
             await _context.SaveChangesAsync();
