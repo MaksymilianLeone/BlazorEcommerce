@@ -2,11 +2,19 @@
 @inject IArticleService ArticleService
 @if (ArticleService.Articles == null)
 {
-    <p>Loading...</p>
+    <div class="news-flash">
+        <div class="news-content">
+            <p>Loading...</p>
+        </div>
+    </div>
 }
 else if (!ArticleService.Articles.Any())
 {
-    <p>No articles available.</p>
+    <div class="news-flash">
+        <div class="news-content">
+            <p>No articles available.</p>
+        </div>
+    </div>
 }
 else
 {
@@ -14,7 +22,7 @@ else
     {
         <div class="news-flash">
             <div class="news-content">
-                <span>@article.Title</span>
+                <span><a href="/Article/@article.Id"><h1>@article.Title</h1></a></span>
             </div>
         </div>
 
@@ -23,9 +31,19 @@ else
 
 
 @code {
-    protected override async Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
-        await ArticleService.GetArticles();
         ArticleService.OnChange += StateHasChanged;
     }
+
+    public void Dispose()
+    {
+        ArticleService.OnChange -= StateHasChanged;
+    }
+
+    // protected override async Task OnInitializedAsync()
+    // {
+    //     await ArticleService.GetArticles();
+    //     ArticleService.OnChange += StateHasChanged;
+    // }
 }
