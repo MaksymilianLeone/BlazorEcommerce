@@ -51,6 +51,12 @@ namespace BlazorEcommerce.Client.Services.ArticleService
                 AdminArticles = response.Data;
         }
 
+        public async Task<ServiceResponse<Article>> GetArticle(int articleId)
+        {
+            var result = await _http.GetFromJsonAsync<ServiceResponse<Article>>($"api/article/{articleId}");
+            return result;
+        }
+
         public async Task GetArticles()
         {
             var response = await _http.GetFromJsonAsync<ServiceResponse<List<Article>>>("api/Article");

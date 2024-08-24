@@ -1,6 +1,7 @@
 ﻿
 
 
+using BlazorEcommerce.Client.Pages.Admin;
 using BlazorEcommerce.Shared;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,10 +10,12 @@ namespace BlazorEcommerce.Server.Services.ArticleService
     public class ArticleService : IArticleService
     {
         private readonly DataContext _context;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public ArticleService(DataContext context)
+        public ArticleService(DataContext context, IHttpContextAccessor httpContextAccessor)
         {
             _context = context;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<ServiceResponse<List<Article>>> AddArticle(Article article)
@@ -94,6 +97,35 @@ namespace BlazorEcommerce.Server.Services.ArticleService
             await _context.SaveChangesAsync();
 
             return await GetAdminArticles();
+        }
+
+        public async Task<ServiceResponse<Article>> GetArticleAsync(int articleId)
+        {
+            var response = new ServiceResponse<Article>();
+            Article article = null;
+
+            if (_httpContextAccessor.HttpContext.User.IsInRole("Admin"))
+            {
+                article = await _context.Articles
+                    .FirstOrDefaultAsync(p => p.Id == articleId && !p.Deleted);
+            }
+            else
+            {
+                article = await _context.Articles
+                    .FirstOrDefaultAsync(p => p.Id == articleId && !p.Deleted && p.Visible);
+            }
+
+            if (article == null)
+            {
+                response.Success = false;
+                response.Message = "Sorry, but this product does not exist.";
+            }
+            else
+            {
+                response.Data = article;
+            }
+
+            return response;
         }
     }
 }

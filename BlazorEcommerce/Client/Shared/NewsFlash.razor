@@ -1,12 +1,31 @@
 ﻿@using BlazorEcommerce.Client.Services.ArticleService
 @inject IArticleService ArticleService
-<div class="news-flash">
-    <div class="news-content">
-        <span>First Article</span>
-        <span>Second Article</span>
-    </div>
-</div>
+@if (ArticleService.Articles == null)
+{
+    <p>Loading...</p>
+}
+else if (!ArticleService.Articles.Any())
+{
+    <p>No articles available.</p>
+}
+else
+{
+    @foreach (var article in ArticleService.Articles)
+    {
+        <div class="news-flash">
+            <div class="news-content">
+                <span>@article.Title</span>
+            </div>
+        </div>
+
+    }
+}
+
 
 @code {
-   
+    protected override async Task OnInitializedAsync()
+    {
+        await ArticleService.GetArticles();
+        ArticleService.OnChange += StateHasChanged;
+    }
 }
