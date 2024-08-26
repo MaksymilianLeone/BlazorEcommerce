@@ -22,7 +22,7 @@ namespace BlazorEcommerce.Server.Controllers
             return Ok(result);
         }
 
-        [HttpGet("admin"), Authorize(Roles = "Admin")]
+        [HttpGet("admin")/*, Authorize(Roles = "Admin")*/]
         public async Task<ActionResult<ServiceResponse<List<Article>>>> GetAdminArticles()
         {
             var result = await _articleService.GetAdminArticles();
