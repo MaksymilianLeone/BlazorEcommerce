@@ -26,19 +26,19 @@ else
     public int Id { get; set; }
 
 
-    // protected override async Task OnParametersSetAsync()
-    // {
-    //     message = "Loading product...";
-    //     var result = await ArticleService.GetArticle(Id);
+    protected override async Task OnParametersSetAsync()
+    {
+        message = "Loading product...";
+        var result = await ArticleService.GetArticle(Id);
 
-    //     if (!result.Success)
-    //     {
-    //         message = result.Message;
-    //     }
-    //     else
-    //     {
-    //         article = result.Data;
+        if (!result.Success)
+        {
+            message = result.Message;
+        }
+        else
+        {
+            article = result.Data;
            
-    //     }
-    // }
+        }
+    }
 }
